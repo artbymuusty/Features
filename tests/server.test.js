@@ -25,6 +25,16 @@ test('Server & REST API: serves features, index, and individual detail', async (
     const detail = await resDetail.json();
     assert.equal(detail.id, 'sparkline-svg');
     assert.ok(detail._filesContent['index.js']);
+
+    // 4. Missing static asset with extension returns 404
+    const resMissingAsset = await fetch(`${url}/missing-file.css`);
+    assert.equal(resMissingAsset.status, 404);
+
+    // 5. Extensionless SPA route returns 200 index.html
+    const resSpaRoute = await fetch(`${url}/catalog/sparkline`);
+    assert.equal(resSpaRoute.status, 200);
+    const spaBody = await resSpaRoute.text();
+    assert.ok(spaBody.includes('<!DOCTYPE html>'));
   } finally {
     server.close();
   }

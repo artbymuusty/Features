@@ -2,6 +2,18 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { BiometricKeychainVault } from './index.js';
 
+test('BiometricKeychainVault: requires explicit master password', () => {
+  assert.throws(
+    () => new BiometricKeychainVault(),
+    /requires an explicit masterPassword/
+  );
+
+  assert.throws(
+    () => new BiometricKeychainVault({ masterPassword: 'short' }),
+    /at least 8 characters/
+  );
+});
+
 test('BiometricKeychainVault: encrypt, store and retrieve secret', async () => {
   const vault = new BiometricKeychainVault({
     promptBiometric: async () => true,
@@ -18,7 +30,8 @@ test('BiometricKeychainVault: encrypt, store and retrieve secret', async () => {
 test('BiometricKeychainVault: rejects access when authorization fails', async () => {
   let allowPrompt = false;
   const vault = new BiometricKeychainVault({
-    promptBiometric: async () => allowPrompt
+    promptBiometric: async () => allowPrompt,
+    masterPassword: 'super-secret-passphrase'
   });
 
   allowPrompt = true;
@@ -32,7 +45,7 @@ test('BiometricKeychainVault: rejects access when authorization fails', async ()
 });
 
 test('BiometricKeychainVault: delete secret and returns null for unknown key', async () => {
-  const vault = new BiometricKeychainVault();
+  const vault = new BiometricKeychainVault({ masterPassword: 'super-secret-passphrase' });
   await vault.storeSecret('token:a', '123');
   assert.equal(await vault.getSecret('unknown'), null);
 

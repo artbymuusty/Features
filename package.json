@@ -14,7 +14,8 @@
     "search": "node bin/features.js search",
     "validate": "node bin/features.js validate",
     "serve": "node bin/features.js serve",
-    "build:obsidian": "node obsidian-plugin/build.js"
+    "check": "node --check bin/features.js obsidian-plugin/main.js src/*.js",
+    "build:obsidian": "node obsidian-plugin/build.js && node --check obsidian-plugin/main.js"
   },
   "keywords": [
     "feature-catalog",

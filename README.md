@@ -27,11 +27,11 @@ Features turns reusable architectural building blocks—storage engines, biometr
 
 | Feature ID | Category | Maturity | Tech Stack | Summary |
 | :--- | :--- | :--- | :--- | :--- |
-| **`sqlite-kv-store`** | `storage` | `stable` | JavaScript, Node, SQLite | Resilient, high-throughput key-value store with TTL expiration and JSON document querying |
-| **`biometric-keychain`** | `auth` | `stable` | JavaScript, Node, Crypto | Platform-agnostic biometric authentication and encrypted credential storage interface |
+| **`sqlite-kv-store`** | `storage` | `experimental` | JavaScript, Node, SQLite | Resilient key-value store with TTL expiration backed by native Node.js SQLite (Node 22.5+) |
+| **`biometric-keychain`** | `auth` | `beta` | JavaScript, Node, Crypto | In-memory AES-256-GCM encrypted credential vault with biometric authorization callback hooks |
 | **`sparkline-svg`** | `ui` | `stable` | JavaScript, SVG, CSS | Zero-dependency responsive SVG sparkline chart component with spline curve interpolation |
-| **`mcp-stdio-bridge`** | `ai` | `stable` | JavaScript, Node, Stream | Model Context Protocol JSON-RPC 2.0 message framer and stdio transport adapter |
-| **`precision-cron`** | `workflow` | `stable` | JavaScript, Node, Async | In-memory precision job scheduler with drift compensation, jitter, and retry backoff |
+| **`mcp-stdio-bridge`** | `ai` | `stable` | JavaScript, Node, Stream | Model Context Protocol JSON-RPC 2.0 message framer supporting line-delimited and Content-Length framing |
+| **`precision-cron`** | `workflow` | `stable` | JavaScript, Node, Async | In-memory precision job scheduler with absolute baseline drift compensation, jitter, and retry backoff |
 
 ---
 

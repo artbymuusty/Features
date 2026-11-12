@@ -1,7 +1,7 @@
 import { EventEmitter } from 'node:events';
 
 /**
- * Resilient In-Memory Precision Job Scheduler
+ * Resilient In-Memory Precision Job Scheduler with Absolute Drift Compensation
  */
 export class PrecisionCronScheduler extends EventEmitter {
   constructor(options = {}) {
@@ -30,6 +30,8 @@ export class PrecisionCronScheduler extends EventEmitter {
       maxRetries: options.maxRetries || 3,
       running: false,
       timer: null,
+      baselineTime: null,
+      executionCount: 0,
       nextExpectedRun: null,
       stats: { runs: 0, successes: 0, failures: 0, lastRun: null }
     };
@@ -46,14 +48,19 @@ export class PrecisionCronScheduler extends EventEmitter {
       const job = this.jobs.get(jobId);
       if (job && !job.running) {
         job.running = true;
+        job.baselineTime = Date.now();
+        job.executionCount = 0;
         this._scheduleNext(job);
       }
       return;
     }
 
+    const now = Date.now();
     for (const job of this.jobs.values()) {
       if (!job.running) {
         job.running = true;
+        job.baselineTime = now;
+        job.executionCount = 0;
         this._scheduleNext(job);
       }
     }
@@ -62,9 +69,22 @@ export class PrecisionCronScheduler extends EventEmitter {
   _scheduleNext(job) {
     if (!job.running) return;
 
+    job.executionCount++;
+    // Absolute timing baseline: target = baseline + (count * interval)
+    const targetTime = job.baselineTime + (job.executionCount * job.intervalMs);
+    const now = Date.now();
+
+    let rawDelay = targetTime - now;
+    if (rawDelay < 0) {
+      // Overrun compensation: resynchronize baseline to prevent runaway bursts
+      job.baselineTime = now;
+      job.executionCount = 1;
+      rawDelay = job.intervalMs;
+    }
+
     const jitter = job.jitterMs > 0 ? (Math.random() * job.jitterMs) : 0;
-    const delay = Math.max(0, job.intervalMs + jitter);
-    job.nextExpectedRun = Date.now() + delay;
+    const delay = Math.max(0, Math.round(rawDelay + jitter));
+    job.nextExpectedRun = now + delay;
 
     job.timer = setTimeout(async () => {
       await this.runNow(job.id);

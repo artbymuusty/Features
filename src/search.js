@@ -35,8 +35,15 @@ export function searchCatalog(query = '', filters = {}, index = null) {
     candidateFeatures = candidateFeatures.filter(f => f.maturity.toLowerCase() === targetMat);
   }
 
-  // 2. If no query string, return all filtered features sorted by name
-  if (tokens.length === 0) {
+  const trimmedQuery = typeof query === 'string' ? query.trim() : '';
+
+  // 2. If query had non-whitespace characters but produced zero valid tokens (e.g. "@#$!"), return zero results
+  if (trimmedQuery.length > 0 && tokens.length === 0) {
+    return [];
+  }
+
+  // If genuinely empty query string, return all filtered features sorted by name
+  if (trimmedQuery.length === 0) {
     return candidateFeatures
       .map(feature => ({ feature, score: 1, matches: [] }))
       .sort((a, b) => a.feature.name.localeCompare(b.feature.name));

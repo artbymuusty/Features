@@ -199,9 +199,9 @@ class FeaturesExplorerView extends ItemView {
       insertBtn.onclick = () => {
         const activeView = this.app.workspace.getActiveViewOfType(require('obsidian').MarkdownView);
         if (activeView && activeView.editor) {
-          const snippet = \`\\n> [!NOTE] Feature: \${feature.name} (\`\${feature.id}\` v\${feature.version})\\n> **Category:** \${feature.category} | **Maturity:** \${feature.maturity}\\n> \${feature.summary}\\n> \`npx features download \${feature.id} --out ./\${feature.id}\`\\n\\n\`;
+          const snippet = '\\n> [!NOTE] Feature: ' + feature.name + ' (' + feature.id + ' v' + feature.version + ')\\n> **Category:** ' + feature.category + ' | **Maturity:** ' + feature.maturity + '\\n> ' + feature.summary + '\\n> \\x60npx features download ' + feature.id + ' --out ./' + feature.id + '\\x60\\n\\n';
           activeView.editor.replaceSelection(snippet);
-          new Notice(\`Inserted \${feature.name} into note\`);
+          new Notice('Inserted ' + feature.name + ' into note');
         } else {
           new Notice('Please focus an open Markdown note first');
         }
@@ -232,6 +232,10 @@ class FeaturesPlugin extends Plugin {
         this.activateView();
       }
     });
+  }
+
+  onunload() {
+    this.app.workspace.detachLeavesOfType(VIEW_TYPE_FEATURES);
   }
 
   async activateView() {

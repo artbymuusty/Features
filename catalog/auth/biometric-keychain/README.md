@@ -1,6 +1,8 @@
-# Biometric Keychain Vault
+# In-Memory Biometric Vault Adapter
 
-Platform-agnostic biometric authentication and encrypted credential storage interface.
+In-memory AES-256-GCM encrypted credential vault with biometric authorization callback hooks.
+
+> **Storage Notice:** Ephemeral in-memory storage. Secrets are held in memory and not persisted across process restarts.
 
 ## Usage
 
@@ -8,8 +10,9 @@ Platform-agnostic biometric authentication and encrypted credential storage inte
 import { BiometricKeychainVault } from './index.js';
 
 const vault = new BiometricKeychainVault({
+  masterPassword: 'my-secure-master-passphrase',
   promptBiometric: async (reason) => {
-    // Connect to TouchID / FaceID native prompt or WebAuthn
+    // Connect to UI Touch ID / WebAuthn / Face ID verification prompt
     return true;
   }
 });

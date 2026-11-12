@@ -88,10 +88,18 @@ export function createServer(options = {}) {
     }
 
     // 4. Static files from /web
+    const requestedExt = path.extname(pathname);
     let filePath = path.join(WEB_DIR, pathname === '/' ? 'index.html' : pathname);
     if (!filePath.startsWith(WEB_DIR)) {
       res.writeHead(403, { 'Content-Type': 'text/plain' });
       res.end('Forbidden');
+      return;
+    }
+
+    // If client requested a specific file extension that does not exist, return 404
+    if (requestedExt && !fs.existsSync(filePath)) {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('Not Found');
       return;
     }
 

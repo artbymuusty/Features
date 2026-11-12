@@ -1,17 +1,21 @@
 import crypto from 'node:crypto';
 
 /**
- * BiometricKeychainVault provides encrypted secret storage gated by biometric/authorization hooks.
+ * BiometricKeychainVault provides in-memory AES-256-GCM encrypted secret storage
+ * gated by biometric authorization callback hooks.
  */
 export class BiometricKeychainVault {
   /**
    * @param {object} options
-   * @param {Function} [options.promptBiometric] Optional hook returning Promise<boolean>
-   * @param {string} [options.masterPassword] Optional master passphrase for key derivation
+   * @param {string} options.masterPassword Required passphrase for key derivation (min 8 chars)
+   * @param {Function} [options.promptBiometric] Optional authorization hook returning Promise<boolean>
    */
   constructor(options = {}) {
+    if (!options.masterPassword || typeof options.masterPassword !== 'string' || options.masterPassword.trim().length < 8) {
+      throw new Error('BiometricKeychainVault requires an explicit masterPassword of at least 8 characters.');
+    }
     this.promptBiometric = options.promptBiometric || (async () => true);
-    this.masterPassword = options.masterPassword || 'default-vault-key-secret';
+    this.masterPassword = options.masterPassword;
     this.storage = new Map();
   }
 

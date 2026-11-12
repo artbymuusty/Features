@@ -20,6 +20,32 @@ test('PrecisionCronScheduler: executes registered job and records stats', async 
   assert.equal(job.stats.failures, 0);
 });
 
+test('PrecisionCronScheduler: drift compensation maintains target timeline despite execution lag', async () => {
+  const scheduler = new PrecisionCronScheduler();
+  const timestamps = [];
+  const start = Date.now();
+
+  scheduler.register('drift-test', async () => {
+    timestamps.push(Date.now() - start);
+    // Simulate task taking 15ms of work
+    await new Promise(r => setTimeout(r, 15));
+  }, { intervalMs: 50 });
+
+  scheduler.start('drift-test');
+  await new Promise(r => setTimeout(r, 170));
+  scheduler.stop('drift-test');
+
+  // Should have executed ~3 times within ~170ms
+  assert.ok(timestamps.length >= 3, `Expected at least 3 runs, got ${timestamps.length}: ${timestamps.join(', ')}`);
+  
+  // Verify timestamps are spaced approximately by interval (50ms) rather than (50ms + 15ms work = 65ms)
+  const diff1 = timestamps[1] - timestamps[0];
+  const diff2 = timestamps[2] - timestamps[1];
+  
+  assert.ok(diff1 >= 40 && diff1 <= 65, `Expected interval ~50ms, got ${diff1}ms`);
+  assert.ok(diff2 >= 40 && diff2 <= 65, `Expected interval ~50ms, got ${diff2}ms`);
+});
+
 test('PrecisionCronScheduler: retries with backoff upon failure', async () => {
   const scheduler = new PrecisionCronScheduler();
   let attempts = 0;

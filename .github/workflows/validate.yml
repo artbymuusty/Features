@@ -19,16 +19,23 @@ jobs:
         with:
           node-version: 22
 
+      - name: Syntax Check Core and CLI Scripts
+        run: |
+          node --check bin/features.js
+          for f in src/*.js; do
+            node --check "$f"
+          done
+
       - name: Validate Feature Schema & Catalog Integrity
         run: |
           node bin/features.js validate
 
       - name: Rebuild & Verify Catalog Index
         run: |
-          node bin/features.js index
+          npm run index
           git diff --exit-code catalog-index.json || (echo "catalog-index.json is out of date. Run 'npm run index' before submitting." && exit 1)
 
-      - name: Run Core Test Suite
+      - name: Run Core & Security Test Suite
         run: |
           npm test
 
@@ -41,7 +48,8 @@ jobs:
             fi
           done
 
-      - name: Verify Obsidian Plugin Bundle
+      - name: Build & Verify Obsidian Plugin Bundle Syntax
         run: |
           npm run build:obsidian
+          node --check obsidian-plugin/main.js
           git diff --exit-code obsidian-plugin/main.js || (echo "obsidian-plugin/main.js is out of date. Run 'npm run build:obsidian' before submitting." && exit 1)

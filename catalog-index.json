@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-11-12T14:21:29.402Z",
+  "generated_at": "2026-11-12T15:05:11.060Z",
   "total_features": 5,
   "stats": {
     "categories": {
@@ -30,10 +30,10 @@
       "agents": 1,
       "auth": 1,
       "security": 1,
-      "keychain": 1,
       "biometric": 1,
       "encryption": 1,
       "credentials": 1,
+      "in-memory": 1,
       "storage": 1,
       "sqlite": 1,
       "key-value": 1,
@@ -55,7 +55,9 @@
       "background-tasks": 1
     },
     "maturities": {
-      "stable": 5
+      "stable": 3,
+      "beta": 1,
+      "experimental": 1
     }
   },
   "features": [
@@ -98,25 +100,25 @@
     },
     {
       "id": "biometric-keychain",
-      "name": "Biometric Keychain Vault",
+      "name": "In-Memory Biometric Vault Adapter",
       "version": "1.0.0",
-      "summary": "Platform-agnostic biometric authentication and encrypted credential storage interface",
-      "description": "## Biometric Keychain Vault\n\nProvides a secure, platform-agnostic abstraction for storing authentication tokens and credentials guarded by biometric authorization (Touch ID, Face ID, Windows Hello) with software fallbacks for headless/CI environments.\n\n### Capabilities\n- Biometric gating on read/write operations\n- Secure PBKDF2/AES-GCM encryption in software mode\n- Token rotation and automatic invalidation\n- Zero third-party dependencies",
+      "summary": "In-memory AES-256-GCM encrypted credential vault with biometric authorization callback hooks",
+      "description": "## In-Memory Biometric Vault Adapter\n\nProvides in-memory AES-256-GCM credential encryption gated by configurable biometric or user-presence authorization callback hooks. Designed as an adapter layer for applications connecting UI biometrics to ephemeral in-memory token vaults.\n\n### Security Details\n- Ephemeral in-memory storage; tokens do not persist across process restarts\n- Enforces user-supplied master passphrase (min 8 characters)\n- AES-256-GCM encryption with randomized salt and IV per entry\n- Zero third-party dependencies",
       "category": "auth",
       "tags": [
         "auth",
         "security",
-        "keychain",
         "biometric",
         "encryption",
-        "credentials"
+        "credentials",
+        "in-memory"
       ],
       "technologies": [
         "javascript",
         "node",
         "crypto"
       ],
-      "maturity": "stable",
+      "maturity": "beta",
       "dependencies": {},
       "license": "MIT",
       "author": {
@@ -136,8 +138,8 @@
       "id": "sqlite-kv-store",
       "name": "SQLite Key-Value Store",
       "version": "1.0.0",
-      "summary": "Resilient, high-throughput key-value store with TTL expiration and JSON document querying",
-      "description": "## SQLite KV Store\n\nA zero-dependency, transactional key-value storage engine backed by SQLite. Features automatic TTL eviction, namespaced partitioning, and JSON document queries.\n\n### Features\n- Native SQLite backend using `node:sqlite`\n- Auto-pruning TTL expiration\n- Namespaced keys\n- Bulk atomic batch operations\n- Zero external runtime dependencies",
+      "summary": "Resilient key-value store with TTL expiration backed by native Node.js SQLite (Node 22.5+)",
+      "description": "## SQLite KV Store\n\nA zero-dependency, transactional key-value storage engine backed by native `node:sqlite`. Features automatic TTL eviction, namespaced partitioning, and JSON document queries.\n\n> [!NOTE]\n> Requires Node.js >= 22.5.0 with native `node:sqlite` enabled.\n\n### Features\n- Native SQLite backend using `node:sqlite` (experimental in Node 22)\n- Auto-pruning TTL expiration\n- Namespaced keys\n- Bulk atomic batch operations\n- Zero external runtime dependencies",
       "category": "storage",
       "tags": [
         "storage",
@@ -152,7 +154,7 @@
         "node",
         "sqlite"
       ],
-      "maturity": "stable",
+      "maturity": "experimental",
       "dependencies": {},
       "license": "MIT",
       "author": {
@@ -243,6 +245,9 @@
     }
   ],
   "inverted_index": {
+    "22": [
+      "sqlite-kv-store"
+    ],
     "javascript": [
       "mcp-stdio-bridge",
       "biometric-keychain",
@@ -300,12 +305,11 @@
     ],
     "and": [
       "mcp-stdio-bridge",
-      "biometric-keychain",
-      "sqlite-kv-store",
       "precision-cron"
     ],
     "adapter": [
-      "mcp-stdio-bridge"
+      "mcp-stdio-bridge",
+      "biometric-keychain"
     ],
     "crypto": [
       "biometric-keychain"
@@ -314,9 +318,6 @@
       "biometric-keychain"
     ],
     "security": [
-      "biometric-keychain"
-    ],
-    "keychain": [
       "biometric-keychain"
     ],
     "biometric": [
@@ -328,16 +329,17 @@
     "credentials": [
       "biometric-keychain"
     ],
+    "in-memory": [
+      "biometric-keychain",
+      "precision-cron"
+    ],
     "biometric-keychain": [
       "biometric-keychain"
     ],
     "vault": [
       "biometric-keychain"
     ],
-    "platform-agnostic": [
-      "biometric-keychain"
-    ],
-    "authentication": [
+    "aes-256-gcm": [
       "biometric-keychain"
     ],
     "encrypted": [
@@ -346,14 +348,25 @@
     "credential": [
       "biometric-keychain"
     ],
-    "storage": [
+    "with": [
       "biometric-keychain",
-      "sqlite-kv-store"
+      "sqlite-kv-store",
+      "sparkline-svg",
+      "precision-cron"
     ],
-    "interface": [
+    "authorization": [
+      "biometric-keychain"
+    ],
+    "callback": [
+      "biometric-keychain"
+    ],
+    "hooks": [
       "biometric-keychain"
     ],
     "sqlite": [
+      "sqlite-kv-store"
+    ],
+    "storage": [
       "sqlite-kv-store"
     ],
     "key-value": [
@@ -377,24 +390,19 @@
     "resilient": [
       "sqlite-kv-store"
     ],
-    "high-throughput": [
-      "sqlite-kv-store"
-    ],
-    "with": [
-      "sqlite-kv-store",
-      "sparkline-svg",
-      "precision-cron"
-    ],
     "expiration": [
       "sqlite-kv-store"
     ],
-    "json": [
+    "backed": [
       "sqlite-kv-store"
     ],
-    "document": [
+    "by": [
       "sqlite-kv-store"
     ],
-    "querying": [
+    "native": [
+      "sqlite-kv-store"
+    ],
+    "js": [
       "sqlite-kv-store"
     ],
     "svg": [
@@ -470,9 +478,6 @@
       "precision-cron"
     ],
     "precision": [
-      "precision-cron"
-    ],
-    "in-memory": [
       "precision-cron"
     ],
     "job": [

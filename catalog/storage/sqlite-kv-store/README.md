@@ -1,6 +1,8 @@
 # SQLite Key-Value Store
 
-Resilient, high-throughput key-value store with TTL expiration and JSON document querying.
+Resilient key-value store with TTL expiration backed by native Node.js SQLite (`node:sqlite`).
+
+> **Runtime Requirement:** Node.js >= 22.5.0 (Node 22 built-in `node:sqlite`).
 
 ## Usage
 

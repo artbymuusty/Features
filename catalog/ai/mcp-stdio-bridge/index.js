@@ -2,12 +2,14 @@ import { EventEmitter } from 'node:events';
 
 /**
  * MCP Stdio JSON-RPC 2.0 Message Framer and Transport Bridge
+ * Supports both line-delimited JSON and Content-Length header framing.
  */
 export class MCPStdioBridge extends EventEmitter {
   constructor(options = {}) {
     super();
     this.inStream = options.inStream || null;
     this.outStream = options.outStream || null;
+    this.framing = options.framing || 'lines'; // 'lines' or 'content-length'
     this.defaultTimeout = options.timeout || 5000;
     this.buffer = '';
     this.pendingRequests = new Map();
@@ -29,17 +31,78 @@ export class MCPStdioBridge extends EventEmitter {
    */
   feed(chunk) {
     this.buffer += chunk;
-    const lines = this.buffer.split('\n');
-    this.buffer = lines.pop(); // Keep incomplete tail
+    this._processBuffer();
+  }
 
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed) continue;
-      try {
-        const msg = JSON.parse(trimmed);
-        this._handleMessage(msg);
-      } catch (err) {
-        this.emit('error', new Error(`Invalid JSON-RPC frame: ${err.message}`));
+  _processBuffer() {
+    let keepParsing = true;
+
+    while (keepParsing && this.buffer.length > 0) {
+      const trimmedStart = this.buffer.trimStart();
+      if (!trimmedStart) {
+        this.buffer = '';
+        break;
+      }
+
+      // Check for Content-Length header framing
+      if (/^content-length:/i.test(trimmedStart)) {
+        const headerMatch = trimmedStart.match(/^content-length:\s*(\d+)/i);
+        if (!headerMatch) {
+          keepParsing = false;
+          break;
+        }
+
+        const length = parseInt(headerMatch[1], 10);
+        let headerLen = -1;
+        const doubleCrLf = trimmedStart.indexOf('\r\n\r\n');
+        if (doubleCrLf !== -1) {
+          headerLen = doubleCrLf + 4;
+        } else {
+          const doubleLf = trimmedStart.indexOf('\n\n');
+          if (doubleLf !== -1) {
+            headerLen = doubleLf + 2;
+          }
+        }
+
+        if (headerLen === -1) {
+          keepParsing = false;
+          break; // Incomplete header
+        }
+
+        const totalNeeded = headerLen + length;
+        if (trimmedStart.length < totalNeeded) {
+          keepParsing = false;
+          break; // Incomplete payload body
+        }
+
+        const bodyStr = trimmedStart.slice(headerLen, totalNeeded);
+        this.buffer = trimmedStart.slice(totalNeeded);
+
+        try {
+          const msg = JSON.parse(bodyStr);
+          this._handleMessage(msg);
+        } catch (err) {
+          this.emit('error', new Error(`Invalid JSON-RPC content frame: ${err.message}`));
+        }
+      } else {
+        // Line-delimited framing
+        const newlineIndex = this.buffer.indexOf('\n');
+        if (newlineIndex === -1) {
+          keepParsing = false;
+          break;
+        }
+
+        const line = this.buffer.slice(0, newlineIndex).trim();
+        this.buffer = this.buffer.slice(newlineIndex + 1);
+
+        if (line) {
+          try {
+            const msg = JSON.parse(line);
+            this._handleMessage(msg);
+          } catch (err) {
+            this.emit('error', new Error(`Invalid JSON-RPC frame: ${err.message}`));
+          }
+        }
       }
     }
   }
@@ -144,10 +207,18 @@ export class MCPStdioBridge extends EventEmitter {
   }
 
   _write(obj) {
-    const line = JSON.stringify(obj) + '\n';
-    if (this.outStream && typeof this.outStream.write === 'function') {
-      this.outStream.write(line);
+    const payload = JSON.stringify(obj);
+    let formatted;
+    if (this.framing === 'content-length') {
+      const byteLen = Buffer.byteLength(payload, 'utf8');
+      formatted = `Content-Length: ${byteLen}\r\n\r\n${payload}`;
+    } else {
+      formatted = payload + '\n';
     }
-    this.emit('raw_write', line);
+
+    if (this.outStream && typeof this.outStream.write === 'function') {
+      this.outStream.write(formatted);
+    }
+    this.emit('raw_write', formatted);
   }
 }
