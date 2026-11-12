@@ -68,6 +68,7 @@ class FeaturesExplorerView extends ItemView {
   constructor(leaf, plugin) {
     super(leaf);
     this.plugin = plugin;
+    this.app = (plugin && plugin.app) || (leaf && leaf.app) || null;
     this.catalogIndex = EMBEDDED_CATALOG_INDEX;
     this.selectedCategory = 'all';
     this.searchQuery = '';
