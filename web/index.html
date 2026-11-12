@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Features - Open Source Catalog & Package Explorer</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --border: #1f293d;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --tag-bg: #1e293b;
+      --success: #10b981;
+      --warn: #f59e0b;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --tag-bg: #f1f5f9;
+      --success: #059669;
+      --warn: #d97706;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.5;
+      padding-bottom: 60px;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      font-size: 1.1rem;
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .theme-toggle {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .search-hero {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+    }
+
+    .filters-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+
+    .card-top {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-stable { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .badge-beta { background: rgba(245, 158, 11, 0.15); color: var(--warn); }
+    .badge-experimental { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+    .card-summary {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      background: var(--tag-bg);
+      color: var(--muted);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      max-width: 680px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      font-size: 0.92rem;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    pre {
+      background: var(--bg);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      font-family: monospace;
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-icon">F</div>
+        <div>
+          <h1>Features</h1>
+          <p style="font-size: 0.8rem; color: var(--muted);">Standardized Public Feature Catalog</p>
+        </div>
+      </div>
+      <button class="theme-toggle" id="themeToggle">🌓 Mode</button>
+    </header>
+
+    <div class="search-hero">
+      <div class="search-input-wrap">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search features by keyword, tag, or technology (e.g. sqlite, crypto, svg)..." />
+      </div>
+      <div class="filters-bar" id="categoryChips">
+        <button class="filter-btn active" data-cat="all">All Categories</button>
+      </div>
+    </div>
+
+    <div class="grid" id="featuresGrid">
+      <!-- Feature cards populated by JS -->
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="modalTitle">Feature Details</h2>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let catalogIndex = null;
+    let selectedCategory = 'all';
+
+    async function init() {
+      try {
+        const res = await fetch('/api/index');
+        catalogIndex = await res.json();
+      } catch (err) {
+        console.warn('Falling back to static loading or failed fetch', err);
+      }
+
+      if (catalogIndex) {
+        renderFilters();
+        renderFeatures();
+      }
+
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        renderFeatures();
+      });
+
+      document.getElementById('themeToggle').addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+      });
+
+      document.getElementById('modalClose').onclick = closeModal;
+      document.getElementById('modalOverlay').onclick = (e) => {
+        if (e.target.id === 'modalOverlay') closeModal();
+      };
+    }
+
+    function renderFilters() {
+      const container = document.getElementById('categoryChips');
+      const cats = Object.keys(catalogIndex.stats?.categories || {});
+      for (const cat of cats) {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.dataset.cat = cat;
+        btn.textContent = `${cat.toUpperCase()} (${catalogIndex.stats.categories[cat]})`;
+        btn.onclick = () => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedCategory = cat;
+          renderFeatures();
+        };
+        container.appendChild(btn);
+      }
+    }
+
+    function renderFeatures() {
+      const grid = document.getElementById('featuresGrid');
+      grid.innerHTML = '';
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      let items = catalogIndex.features || [];
+      if (selectedCategory !== 'all') {
+        items = items.filter(f => f.category === selectedCategory);
+      }
+      if (query) {
+        items = items.filter(f => {
+          const haystack = `${f.id} ${f.name} ${f.summary} ${(f.tags || []).join(' ')} ${(f.technologies || []).join(' ')}`.toLowerCase();
+          return haystack.includes(query);
+        });
+      }
+
+      if (items.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 40px 0;">No matching features found.</div>';
+        return;
+      }
+
+      for (const f of items) {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const badgeClass = f.maturity === 'stable' ? 'badge-stable' : (f.maturity === 'beta' ? 'badge-beta' : 'badge-experimental');
+
+        card.innerHTML = `
+          <div class="card-top">
+            <div class="card-header">
+              <div class="card-title">${escapeHtml(f.name)}</div>
+              <span class="badge ${badgeClass}">${f.maturity}</span>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--muted);">${escapeHtml(f.id)} &bull; v${f.version}</div>
+            <div class="card-summary">${escapeHtml(f.summary)}</div>
+            <div class="tags">
+              ${(f.tags || []).map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join('')}
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn" onclick="openDetail('${f.id}')">Inspect</button>
+            <button class="btn btn-primary" onclick="copyInstall('${f.id}')">Download</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      }
+    }
+
+    async function openDetail(id) {
+      const modal = document.getElementById('modalOverlay');
+      const body = document.getElementById('modalBody');
+      const title = document.getElementById('modalTitle');
+
+      const f = (catalogIndex.features || []).find(item => item.id === id);
+      if (!f) return;
+
+      title.textContent = f.name;
+      body.innerHTML = `
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--muted);">
+          <span>ID: <code>${f.id}</code></span>
+          <span>Version: ${f.version}</span>
+          <span>License: ${f.license}</span>
+        </div>
+        <p>${escapeHtml(f.summary)}</p>
+        <h4>Technologies</h4>
+        <p>${(f.technologies || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join(' ')}</p>
+        <h4>Files Included</h4>
+        <pre>${(f.files || []).join('\n')}</pre>
+        <h4>Install via CLI</h4>
+        <pre>features download ${f.id} --out ./${f.id}</pre>
+      `;
+
+      modal.classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+
+    function copyInstall(id) {
+      navigator.clipboard.writeText(`features download ${id} --out ./${id}`);
+      alert(`Copied: features download ${id} --out ./${id}`);
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "$schema": "../../schemas/feature.schema.json",
+  "id": "biometric-keychain",
+  "name": "Biometric Keychain Vault",
+  "version": "1.0.0",
+  "summary": "Platform-agnostic biometric authentication and encrypted credential storage interface",
+  "description": "## Biometric Keychain Vault\n\nProvides a secure, platform-agnostic abstraction for storing authentication tokens and credentials guarded by biometric authorization (Touch ID, Face ID, Windows Hello) with software fallbacks for headless/CI environments.\n\n### Capabilities\n- Biometric gating on read/write operations\n- Secure PBKDF2/AES-GCM encryption in software mode\n- Token rotation and automatic invalidation\n- Zero third-party dependencies",
+  "category": "auth",
+  "tags": ["auth", "security", "keychain", "biometric", "encryption", "credentials"],
+  "technologies": ["javascript", "node", "crypto"],
+  "maturity": "stable",
+  "dependencies": {},
+  "license": "MIT",
+  "author": {
+    "name": "Mustafa Furkan ÖZCAN",
+    "github": "artbymuusty"
+  },
+  "entrypoint": "index.js",
+  "created_at": "2026-11-12T12:00:00Z",
+  "updated_at": "2026-11-12T12:00:00Z"
+}

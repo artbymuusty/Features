@@ -1,0 +1,41 @@
+{
+  "name": "@artbymuusty/features",
+  "version": "0.1.0",
+  "description": "Standardized, searchable public feature catalog, local search CLI, and Obsidian explorer",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "features": "./bin/features.js"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "features": "node bin/features.js",
+    "index": "node bin/features.js index",
+    "search": "node bin/features.js search",
+    "validate": "node bin/features.js validate",
+    "serve": "node bin/features.js serve",
+    "build:obsidian": "node obsidian-plugin/build.js"
+  },
+  "keywords": [
+    "feature-catalog",
+    "features",
+    "obsidian-plugin",
+    "package-manager",
+    "developer-tools",
+    "catalog",
+    "modular-architecture"
+  ],
+  "author": "Mustafa Furkan ÖZCAN <artbymuusty>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artbymuusty/Features.git"
+  },
+  "bugs": {
+    "url": "https://github.com/artbymuusty/Features/issues"
+  },
+  "homepage": "https://github.com/artbymuusty/Features#readme",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

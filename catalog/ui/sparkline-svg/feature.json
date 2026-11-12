@@ -1,0 +1,21 @@
+{
+  "$schema": "../../schemas/feature.schema.json",
+  "id": "sparkline-svg",
+  "name": "Sparkline SVG Generator",
+  "version": "1.0.0",
+  "summary": "Zero-dependency responsive SVG sparkline chart component with spline curve interpolation",
+  "description": "## Sparkline SVG Generator\n\nGenerate beautiful, responsive, self-contained SVG sparklines with smooth Catmull-Rom or cubic bezier spline interpolation, gradient area fills, min/max markers, and interactive hover dots.\n\n### Highlights\n- Pure SVG string output (usable on server or client)\n- Configurable width, height, stroke width, and gradient colors\n- Automatic scale normalization\n- Zero runtime dependencies",
+  "category": "ui",
+  "tags": ["ui", "chart", "svg", "sparkline", "visualization", "dashboard"],
+  "technologies": ["javascript", "svg", "css"],
+  "maturity": "stable",
+  "dependencies": {},
+  "license": "MIT",
+  "author": {
+    "name": "Mustafa Furkan ÖZCAN",
+    "github": "artbymuusty"
+  },
+  "entrypoint": "index.js",
+  "created_at": "2026-11-12T12:00:00Z",
+  "updated_at": "2026-11-12T12:00:00Z"
+}

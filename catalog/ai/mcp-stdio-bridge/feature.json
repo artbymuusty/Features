@@ -1,0 +1,21 @@
+{
+  "$schema": "../../schemas/feature.schema.json",
+  "id": "mcp-stdio-bridge",
+  "name": "MCP Stdio Bridge",
+  "version": "1.0.0",
+  "summary": "Model Context Protocol JSON-RPC 2.0 message framer and stdio transport adapter",
+  "description": "## MCP Stdio Bridge\n\nImplements line-delimited and Content-Length framed JSON-RPC 2.0 transport for Model Context Protocol (MCP) servers and clients communicating over process standard I/O streams.\n\n### Highlights\n- Strict JSON-RPC 2.0 request/response/notification framing\n- Streaming parser with buffer chunk reassembly\n- Request ID matching with Promise callbacks and timeouts\n- Zero external runtime dependencies",
+  "category": "ai",
+  "tags": ["ai", "mcp", "json-rpc", "stdio", "transport", "protocol", "agents"],
+  "technologies": ["javascript", "node", "stream"],
+  "maturity": "stable",
+  "dependencies": {},
+  "license": "MIT",
+  "author": {
+    "name": "Mustafa Furkan ÖZCAN",
+    "github": "artbymuusty"
+  },
+  "entrypoint": "index.js",
+  "created_at": "2026-11-12T12:00:00Z",
+  "updated_at": "2026-11-12T12:00:00Z"
+}

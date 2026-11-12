@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FeatureMetadata",
+  "description": "Standardized metadata specification for Features catalog packages",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "version",
+    "summary",
+    "category",
+    "tags",
+    "technologies",
+    "maturity",
+    "license",
+    "author"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Unique kebab-case identifier for the feature"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 80,
+      "description": "Human-readable feature title"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$",
+      "description": "Semantic version of the feature package"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 240,
+      "description": "Concise single-sentence description of the capability"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed multi-line Markdown explanation of the feature"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "auth",
+        "storage",
+        "ui",
+        "data",
+        "ai",
+        "networking",
+        "workflow",
+        "media",
+        "system"
+      ],
+      "description": "Primary architectural category"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true,
+      "description": "Discoverability tags in kebab-case"
+    },
+    "technologies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "Technology stack required or supported (e.g., typescript, python, sqlite, react)"
+    },
+    "maturity": {
+      "type": "string",
+      "enum": [
+        "proposed",
+        "experimental",
+        "beta",
+        "stable",
+        "deprecated"
+      ],
+      "description": "Feature lifecycle maturity status"
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Map of package dependencies to version specifiers"
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX license identifier (e.g., MIT, Apache-2.0)"
+    },
+    "author": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "github": { "type": "string" },
+        "email": { "type": "string" }
+      },
+      "description": "Primary creator and maintainer information"
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string" },
+        "original_author": { "type": "string" },
+        "upstream_url": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "description": "Attribution and lineage details"
+    },
+    "entrypoint": {
+      "type": "string",
+      "description": "Primary source file entry point (relative to feature root)"
+    },
+    "files": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Manifest of files included in the feature distribution"
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO 8601 creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "description": "ISO 8601 last update timestamp"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+name: Validate & Test Features Catalog
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Schema Validation & Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate Feature Schema & Catalog Integrity
+        run: |
+          node bin/features.js validate
+
+      - name: Rebuild & Verify Catalog Index
+        run: |
+          node bin/features.js index
+          git diff --exit-code catalog-index.json || (echo "catalog-index.json is out of date. Run 'npm run index' before submitting." && exit 1)
+
+      - name: Run Core Test Suite
+        run: |
+          npm test
+
+      - name: Run Feature Unit Tests
+        run: |
+          for test_file in catalog/*/*/test.js; do
+            if [ -f "$test_file" ]; then
+              echo "==> Running $test_file"
+              node --test "$test_file"
+            fi
+          done
+
+      - name: Verify Obsidian Plugin Bundle
+        run: |
+          npm run build:obsidian
+          git diff --exit-code obsidian-plugin/main.js || (echo "obsidian-plugin/main.js is out of date. Run 'npm run build:obsidian' before submitting." && exit 1)

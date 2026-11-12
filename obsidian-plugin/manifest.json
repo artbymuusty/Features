@@ -1,0 +1,10 @@
+{
+  "id": "features-explorer",
+  "name": "Features Explorer",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Search, inspect, and insert open-source modular features from the Features catalog directly into your workspace.",
+  "author": "Mustafa Furkan ÖZCAN",
+  "authorUrl": "https://github.com/artbymuusty/Features",
+  "isDesktopOnly": false
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "../../schemas/feature.schema.json",
+  "id": "sqlite-kv-store",
+  "name": "SQLite Key-Value Store",
+  "version": "1.0.0",
+  "summary": "Resilient, high-throughput key-value store with TTL expiration and JSON document querying",
+  "description": "## SQLite KV Store\n\nA zero-dependency, transactional key-value storage engine backed by SQLite. Features automatic TTL eviction, namespaced partitioning, and JSON document queries.\n\n### Features\n- Native SQLite backend using `node:sqlite`\n- Auto-pruning TTL expiration\n- Namespaced keys\n- Bulk atomic batch operations\n- Zero external runtime dependencies",
+  "category": "storage",
+  "tags": ["storage", "sqlite", "key-value", "database", "ttl", "persistence"],
+  "technologies": ["javascript", "node", "sqlite"],
+  "maturity": "stable",
+  "dependencies": {},
+  "license": "MIT",
+  "author": {
+    "name": "Mustafa Furkan ÖZCAN",
+    "github": "artbymuusty"
+  },
+  "entrypoint": "index.js",
+  "created_at": "2026-11-12T12:00:00Z",
+  "updated_at": "2026-11-12T12:00:00Z"
+}

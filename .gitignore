@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Build & Test outputs
+dist/
+coverage/
+*.log
+.cache/
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.bak

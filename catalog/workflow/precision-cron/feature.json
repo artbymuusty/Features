@@ -1,0 +1,21 @@
+{
+  "$schema": "../../schemas/feature.schema.json",
+  "id": "precision-cron",
+  "name": "Precision Cron Scheduler",
+  "version": "1.0.0",
+  "summary": "In-memory precision job scheduler with drift compensation, jitter, and retry backoff",
+  "description": "## Precision Cron Scheduler\n\nA resilient, memory-efficient background task runner featuring millisecond drift correction, configurable randomized jitter to prevent thundering herd spikes, and automated exponential backoff on failure.\n\n### Highlights\n- Interval and recurring timer execution with drift compensation\n- Randomized jitter window to spread API bursts\n- Execution history ring buffer and success/failure metrics\n- Graceful cancellation and cleanup\n- Zero external runtime dependencies",
+  "category": "workflow",
+  "tags": ["workflow", "cron", "scheduler", "timer", "retry", "jitter", "background-tasks"],
+  "technologies": ["javascript", "node", "async"],
+  "maturity": "stable",
+  "dependencies": {},
+  "license": "MIT",
+  "author": {
+    "name": "Mustafa Furkan ÖZCAN",
+    "github": "artbymuusty"
+  },
+  "entrypoint": "index.js",
+  "created_at": "2026-11-12T12:00:00Z",
+  "updated_at": "2026-11-12T12:00:00Z"
+}
